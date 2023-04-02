@@ -1,4 +1,8 @@
-function Login() {
+import { React, useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase-config";
+
+const Login = () => {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
 
@@ -16,12 +20,14 @@ function Login() {
       }
     />
   );
-}
+};
 
-function LoginMsg(props) {
+const LoginMsg = (props) => {
   return (
     <>
-      <h5>Success</h5>
+      <h4>Success</h4>
+      <h5>User logged in:</h5>
+      {auth.currentUser.email}
       <button
         type="submit"
         className="btn btn-light"
@@ -31,27 +37,42 @@ function LoginMsg(props) {
       </button>
     </>
   );
-}
+};
 
-function LoginForm(props) {
+const LoginForm = (props) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  function handle() {
-    fetch(`/account/login/${email}/${password}`)
-      .then((response) => response.text())
-      .then((text) => {
-        try {
-          const data = JSON.parse(text);
-          props.setStatus("");
-          props.setShow(false);
-          console.log("JSON:", data);
-        } catch (err) {
-          props.setStatus(text);
-          console.log("err:", text);
-        }
+  const handle = () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
       });
-  }
+
+    props.setStatus("");
+    props.setShow(false);
+
+    // fetch(`/account/login/${email}/${password}`)
+    //   .then((response) => response.text())
+    //   .then((text) => {
+    //     try {
+    //       const data = JSON.parse(text);
+    //       props.setStatus("");
+    //       props.setShow(false);
+    //       console.log("JSON:", data);
+    //     } catch (err) {
+    //       props.setStatus(text);
+    //       console.log("err:", text);
+    //     }
+    //   });
+  };
 
   return (
     <>
@@ -80,4 +101,6 @@ function LoginForm(props) {
       </button>
     </>
   );
-}
+};
+
+export { Login };

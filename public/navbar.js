@@ -1,4 +1,4 @@
-function NavBar() {
+const NavBar = () => {
   return (
     <nav
       className="navbar navbar-expand-sm navbar-dark"
@@ -95,4 +95,4 @@ function NavBar() {
       </div>
     </nav>
   );
-}
+};

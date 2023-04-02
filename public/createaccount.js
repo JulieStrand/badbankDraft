@@ -1,4 +1,8 @@
-function CreateAccount() {
+import { React, useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase-config";
+
+const CreateAccount = () => {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
 
@@ -16,12 +20,14 @@ function CreateAccount() {
       }
     />
   );
-}
+};
 
-function CreateMsg(props) {
+const CreateMsg = (props) => {
   return (
     <>
-      <h5>Success</h5>
+      <h4>Success</h4>
+      <h5>User Logged in:</h5>
+      {auth.currentUser.email}
       <button
         type="submit"
         className="btn btn-light"
@@ -31,23 +37,33 @@ function CreateMsg(props) {
       </button>
     </>
   );
-}
+};
 
-function CreateForm(props) {
+const CreateForm = (props) => {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  function handle() {
+  const handle = () => {
     console.log(name, email, password);
-    const url = `/account/create/${name}/${email}/${password}`;
-    (async () => {
-      var res = await fetch(url);
-      var data = await res.json();
-      console.log(data);
-    })();
+    if (!name || name.length < 1) alert("Error, invalid name");
+    else if (!email || email.length < 1) alert("Error, invalid email");
+    else if (!password || password.length < 8)
+      alert("Error, password must be at least 8 characters");
+    else {
+      createUserWithEmailAndPassword(auth, name, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
+    }
     props.setShow(false);
-  }
+  };
 
   return (
     <>
@@ -86,4 +102,6 @@ function CreateForm(props) {
       </button>
     </>
   );
-}
+};
+
+export { CreateAccount };

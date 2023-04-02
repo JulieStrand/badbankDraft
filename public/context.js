@@ -1,8 +1,6 @@
-const Route = ReactRouterDOM.Route;
-const Link = ReactRouterDOM.Link;
-const HashRouter = ReactRouterDOM.HashRouter;
+import { React, createContext } from "react";
+
 const UserContext = React.createContext(null);
-// const [balance, setBalance] = React.useState("");
 
 function Card(props) {
   function classes() {
@@ -26,7 +24,7 @@ function Card(props) {
 
 // integrate into code above
 // line 1
-// import { createContext, useState } from "react";
+
 // after line 4
 // const [unicornTypes, setUnicornTypes] = useState(undefined);
 // context = createContext({ unicornTypes, setUnicornTypes });

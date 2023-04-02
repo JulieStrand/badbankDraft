@@ -7,15 +7,20 @@ app.use(express.static("public"));
 app.use(cors());
 
 // create user account
-app.get("/account/create/:name/:email/:password", function (req, res) {
-  dal.find(req.params.email).then((users) => {
+app.get("/account/create/:name/:email/:password", async function (req, res) {
+  console.log("aboiut to create a user ahaha");
+  let users = await dal.find(); //{email:req.params.email});
+  console.log("done finding users");
+  {
     if (users.length > 0) {
       console.log("User already exists");
       res.send("User already exists");
     } else {
+      console.log("whyyyy me");
       dal
         .create(req.params.name, req.params.email, req.params.password)
         .then((user) => {
+          console.log("hey things are great");
           console.log(user);
           res.send(user);
         })
@@ -24,7 +29,7 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
           res.status(500).send(err);
         });
     }
-  });
+  }
 });
 
 // login user
@@ -49,7 +54,7 @@ app.get("/account/login/:email/:password", function (req, res) {
 });
 
 // find user account
-app.get("/account/find/:email", function (req, res) {
+app.get("/account/find/:email", (req, res) => {
   dal
     .find(req.params.email)
     .then((user) => {
@@ -63,7 +68,7 @@ app.get("/account/find/:email", function (req, res) {
 });
 
 // find one user by email - alternative to find
-app.get("/account/findOne/:email", function (req, res) {
+app.get("/account/findOne/:email", (req, res) => {
   dal
     .findOne(req.params.email)
     .then((user) => {
@@ -77,7 +82,7 @@ app.get("/account/findOne/:email", function (req, res) {
 });
 
 // update - deposit/withdraw amount
-app.get("/account/update/:email/:amount", function (req, res) {
+app.get("/account/update/:email/:amount", (req, res) => {
   const amount = Number(req.params.amount);
   dal
     .update(req.params.email, amount)
@@ -92,7 +97,7 @@ app.get("/account/update/:email/:amount", function (req, res) {
 });
 
 // all accounts
-app.get("/account/all", function (req, res) {
+app.get("/account/all", (req, res) => {
   dal
     .all()
     .then((docs) => {

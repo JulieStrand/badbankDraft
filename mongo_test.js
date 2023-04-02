@@ -1,42 +1,39 @@
-import pkg from "mongodb";
-const { MongoClient } = pkg;
-const url = "mongodb://badbank-container:27017/myproject";
+import {MongoClient } from "mongodb";
+ 
+const url = "mongodb://127.0.0.1:27017/myproject";
+let args = { useNewUrlParser: true, useUnifiedTopology: true }
 
-// connect to mongo
-MongoClient.connect(
-  url,
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  (err, client) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log("Connected successfully to server");
+let mongo = new MongoClient(url)
 
-    // database Name
-    const dbName = "myproject";
-    const db = client.db(dbName);
+// a quick test of reading a table
+async function unused_test() {
+  let cursor = mongo.db().collection('happy').find()
+  for await(const entry of cursor) { console.log(entry) }
+}
 
-    // new user
-    var name = "user" + Math.floor(Math.random() * 10000);
-    var email = name + "@mit.edu";
+// test add some users
+async function makeuser() {
 
-    // insert into customer table
-    var collection = db.collection("customers");
-    var doc = { name, email };
-    collection.insertOne(
-      doc,
-      { writeConcern: { w: "majority" } },
-      (err, result) => {
+    let db = mongo.db("myproject");
+    let collection = db.collection("customers");
+
+    let name = "user" + Math.floor(Math.random() * 10000);
+    let email = name + "@mit.edu";
+    await collection.insertOne( {name,email}, { writeConcern: { w: "majority" } }, (err, result) => {
         console.log("Document inserted");
       }
     );
 
-    var customers = db
-      .collection("customers")
-      .find()
-      .toArray((err, docs) => {
-        console.log("Collection:", docs);
-      });
-  }
-);
+    console.log("done insert")
+
+    var customers = db.collection("customers").find()
+
+    // customers.toArray((err, docs) => { console.log("Collection:", docs); });
+
+    for await(const entry of customers) { console.log(entry) }
+}
+
+makeuser()
+
+
+

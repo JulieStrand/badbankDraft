@@ -1,4 +1,4 @@
-function Withdraw() {
+const Withdraw = () => {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState(true);
   const [email, setEmail] = React.useState("");
@@ -97,4 +97,4 @@ function Withdraw() {
       }
     />
   );
-}
+};
